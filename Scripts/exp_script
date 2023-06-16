@@ -1,0 +1,21 @@
+#!/bin/sh
+
+V=2
+X=1
+for X in $(seq 1 11)
+do
+	snort -r /home/exp-1/Desktop/data/ds3_aws.pcap -l /home/exp-1/Desktop/data/log/alert -c /etc/snort/snort.conf 
+	wait
+	idstools-u2json --snort-conf /etc/snort/snort.conf --directory /home/exp-1/Desktop/data/log/alert --prefix snort_$X.alert --output /home/exp-1/Desktop/data/log/json/snort_$X.json
+	wait
+	sed -i s/$X.rules/$V.rules/g /etc/snort/snort.conf
+	sed -i s/BL_$X/BL_$V/g /etc/snort/snort.conf
+	sed -i s/snort_$X.alert/snort_$V.alert/g /etc/snort/snort.conf
+	V=$((V+1))
+	echo loop checkpoint : $X 
+done
+
+
+
+
+
